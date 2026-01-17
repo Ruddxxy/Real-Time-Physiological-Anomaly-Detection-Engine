@@ -4,7 +4,7 @@ A high-throughput, **clinically-grounded** ML pipeline for detecting physiologic
 
 **Status**: Production-Grade | Verified on VitalDB (23 Cases) | AUC: 0.99
 
-## 🚀 Key Features
+##  Key Features
 
 *   **Real-World Data Integration**: Integrated with [VitalDB](https://vitaldb.net/), an open dataset of intraoperative metrics.
     *   **Automated Pipeline**: Downloads, caches (Parquet), and normalizes data (HR, BP, SpO2) concurrently.
@@ -17,7 +17,7 @@ A high-throughput, **clinically-grounded** ML pipeline for detecting physiologic
     *   **Idempotency**: Strictly enforces 100% data integrity even during failures.
     *   **Resilience**: Survives unexpected container kills with <5ms latency impact.
 
-## 🛠️ Architecture
+##  Architecture
 
 ```mermaid
 graph TD
@@ -29,7 +29,7 @@ graph TD
     D -->|Persistence| F
 ```
 
-## 📦 Installation
+##  Installation
 
 **Prerequisites**: Docker & Docker Compose.
 
@@ -45,7 +45,7 @@ graph TD
     docker compose up --build -d
     ```
 
-## 🧪 Training & Evaluation (VitalDB)
+##  Training & Evaluation (VitalDB)
 
 The system is pre-configured to train on real surgical data.
 
@@ -61,7 +61,7 @@ The system is pre-configured to train on real surgical data.
     python3 model/train.py --source vitaldb
     ```
 
-## 📊 Benchmarks
+##  Benchmarks
 
 | Metric | verified Value | Context |
 | :--- | :--- | :--- |
@@ -71,7 +71,7 @@ The system is pre-configured to train on real surgical data.
 | **ML AUC** | 0.991 | VitalDB (Real) |
 | **Precision** | 0.973 | VitalDB (Real) |
 
-## 📂 Repository Structure
+##  Repo Structure
 
 ```
 ├── api/                 # FastAPI Ingestion Layer
@@ -88,6 +88,6 @@ The system is pre-configured to train on real surgical data.
 └── requirements.txt     # Python Dependencies
 ```
 
-## 🛡️ License
+##  License
 
 MIT License. Data provided via [VitalDB](https://vitaldb.net/) (Creative Commons).
