@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physio Engine | Ops Console</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --accent: #06b6d4;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+        }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .panel {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 20px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+        h2 { margin-top: 0; font-size: 1.2rem; color: var(--accent); border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .input-group { margin-bottom: 20px; }
+        input { background: #0f172a; border: 1px solid #334155; color: white; padding: 8px; border-radius: 4px; }
+        button { background: var(--accent); color: black; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        /* Stats Grid */
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: #0f172a; padding: 10px; border-radius: 4px; text-align: center; }
+        .stat-val { font-size: 1.5rem; font-weight: bold; }
+        .stat-label { font-size: 0.8rem; color: var(--muted); }
+        
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #334155; }
+        th { color: var(--muted); font-weight: normal; }
+        
+        .anomaly-row { background: rgba(239, 68, 68, 0.1); }
+        .tag { padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; }
+        .tag-spike { background: var(--danger); color: white; }
+        .tag-drift { background: #eab308; color: black; }
+        
+        #chart-container { flex: 1; min-height: 0; position: relative; }
+        
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .feed { flex: 1; overflow-y: auto; }
+        .feed-item { padding: 10px; border-bottom: 1px solid #334155; }
+        .feed-item .meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+        .feed-item .title { font-weight: bold; color: var(--danger); margin: 4px 0; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="panel">
+        <h2>Patient Vitals Stream</h2>
+        <div class="input-group">
+            <input type="text" id="patientIdInput" value="p-1" placeholder="Enter Patient ID">
+            <button onclick="changePatient()">Track</button>
+        </div>
+        
+        <div class="stats" id="currentStats">
+            <div class="stat-card">
+                <div class="stat-val" id="val-hr">--</div>
+                <div class="stat-label">HR (bpm)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="val-spo2">--</div>
+                <div class="stat-label">SpO2 (%)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="val-bp">--/--</div>
+                <div class="stat-label">BP (mmHg)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="val-temp">--</div>
+                <div class="stat-label">Temp (°C)</div>
+            </div>
+        </div>
+        
+        <div id="chart-container">
+            <canvas id="vitalsChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="sidebar">
+        <div class="panel feed">
+            <h2>Real-Time Anomalies</h2>
+            <div id="anomalyFeed">
+                <!-- Items -->
+            </div>
+        </div>
+        
+        <div class="panel feed" style="height: 40%">
+            <h2>Recent Timeline</h2>
+            <table id="timelineTable">
+                <thead><tr><th>Time</th><th>HR</th><th>SpO2</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

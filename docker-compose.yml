@@ -1,0 +1,71 @@
+services:
+  api:
+    build: .
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      - redis
+      - db
+    networks:
+      - physio-net
+
+  worker:
+    build: .
+    command: python -m worker.processor
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      - redis
+      - db
+    networks:
+      - physio-net
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6389:6379"
+    networks:
+      - physio-net
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - "${WN_DB_PORT}:5432"
+    networks:
+      - physio-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+
+
+networks:
+  physio-net:
