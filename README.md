@@ -1,4 +1,4 @@
-# Real-Time Physiological Anomaly Detection Engine
+# Biostream-ML(Real-Time Physiological Anomaly Detection Engine)
 
 A high-throughput, **clinically-grounded** ML pipeline for detecting physiological deterioration in operating room (OR) settings.
 
